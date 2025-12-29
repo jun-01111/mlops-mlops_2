@@ -70,3 +70,39 @@ Dockerfile이 위치한 디렉토리에서 아래 명령어를 입력하여 이�
 
 ```bash
 docker build -t tmdb-pipeline:latest .
+```
+
+### 3.실행 가이드 (Execution Guide)
+
+이 프로젝트는 `main.py`를 통해 모든 파이프라인을 제어하며, Docker 컨테이너 환경 또는 로컬 CLI 환경에서 실행할 수 있습니다.
+
+#### 전체 파이프라인 실행 (collect -> preprocess -> train)
+```
+docker run --rm --env-file .env tmdb-pipeline:latest run_all
+```
+
+#### 특정 단계만 실행 (예: 전처리만 실행)
+```
+docker run --rm --env-file .env tmdb-pipeline:latest preprocess
+```
+
+#### 컨테이너 내부 접속 후 CLI 실행
+
+컨테이너를 백그라운드에서 실행(`-d`)한 뒤, 내부 쉘에 접속하여 직접 `main.py`의 다양한 명령어를 테스트할 수 있습니다.
+
+#### **1) 컨테이너 백그라운드 실행**
+```bash
+docker run -itd --name tmdb_test --env-file .env tmdb-pipeline:latest /bin/bash
+```
+#### **2) 실행 중인 컨테이너 내부 접속
+```
+docker exec -it tmdb_test bash
+```
+#### **3) 내부에서 CLI 명령어 실행
+```
+python main.py collect
+python main.py preprocess
+python main.py run_all
+```
+
+
